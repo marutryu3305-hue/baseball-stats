@@ -1,43 +1,49 @@
 'use strict';
 
-/* ===== Storage ===== */
-const STORAGE_KEY = 'yakyu_data';
-const SCHEMA_VERSION = 1;
+/* ===== Firebase ===== */
+const firebaseConfig = {
+  apiKey: "AIzaSyCvHuf6pHO6eVMOnU-qnLll0Du6kjUIlSc",
+  authDomain: "baseball-stats-79cd3.firebaseapp.com",
+  databaseURL: "https://baseball-stats-79cd3-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "baseball-stats-79cd3",
+  storageBucket: "baseball-stats-79cd3.firebasestorage.app",
+  messagingSenderId: "157498240597",
+  appId: "1:157498240597:web:aaed0734c47966ef946edc"
+};
+firebase.initializeApp(firebaseConfig);
+const DATA_REF = firebase.database().ref('teamData');
 
-function loadData() {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) return freshState();
-    const data = JSON.parse(raw);
-    return migrate(data);
-  } catch (e) {
-    return freshState();
-  }
-}
+/* ===== Storage ===== */
+const SCHEMA_VERSION = 1;
 
 function freshState() {
   return { schemaVersion: SCHEMA_VERSION, games: [], players: [], battingRecords: [], pitchingRecords: [], fieldingRecords: [] };
 }
 
+function toArray(val) {
+  if (!val) return [];
+  if (Array.isArray(val)) return val;
+  return Object.values(val);
+}
+
 function migrate(data) {
-  if (!data.schemaVersion) {
-    data.schemaVersion = SCHEMA_VERSION;
-  }
-  if (data.players) {
-    data.players.forEach(p => {
-      if (!p.positions) {
-        p.positions = p.position ? [p.position] : [];
-        delete p.position;
-      }
-      if (!p.grade) p.grade = null;
-      if (p.furigana === undefined) p.furigana = '';
-    });
-  }
-  if (data.games) {
-    data.games.forEach(g => {
-      if (!g.gameType) g.gameType = 'spring';
-    });
-  }
+  if (!data.schemaVersion) data.schemaVersion = SCHEMA_VERSION;
+  data.games = toArray(data.games);
+  data.players = toArray(data.players);
+  data.battingRecords = toArray(data.battingRecords);
+  data.pitchingRecords = toArray(data.pitchingRecords);
+  data.fieldingRecords = toArray(data.fieldingRecords);
+  data.players.forEach(p => {
+    if (!p.positions) {
+      p.positions = p.position ? [p.position] : [];
+      delete p.position;
+    }
+    if (!p.grade) p.grade = null;
+    if (p.furigana === undefined) p.furigana = '';
+  });
+  data.games.forEach(g => {
+    if (!g.gameType) g.gameType = 'spring';
+  });
   return data;
 }
 
@@ -46,14 +52,10 @@ function gameTypeLabel(type) {
 }
 
 function saveData(state) {
-  try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-  } catch (e) {
-    showToast('データの保存に失敗しました。ストレージ容量をご確認ください。', 'error');
-  }
+  DATA_REF.set(state).catch(() => showToast('データの保存に失敗しました。', 'error'));
 }
 
-let state = loadData();
+let state = freshState();
 
 function newId(prefix) {
   return prefix + '_' + Date.now() + '_' + Math.random().toString(36).slice(2, 7);
@@ -1420,7 +1422,12 @@ function init() {
   document.getElementById('btn-export').addEventListener('click', exportJSON);
   document.getElementById('input-import').addEventListener('change', e => { importJSON(e.target.files[0]); e.target.value = ''; });
 
-  renderAll();
+  DATA_REF.on('value', snapshot => {
+    const data = snapshot.val();
+    state = data ? migrate(data) : freshState();
+    renderAll();
+    if (currentStatsEntryGameId) showStatsEntry(currentStatsEntryGameId);
+  });
 }
 
 document.addEventListener('DOMContentLoaded', init);
