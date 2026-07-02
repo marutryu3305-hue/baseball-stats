@@ -1,6 +1,6 @@
 'use strict';
 
-const CACHE = 'yakyu-v5';
+const CACHE = 'yakyu-v42';
 const ASSETS = [
   './',
   './index.html',
@@ -13,7 +13,8 @@ const ASSETS = [
 ];
 
 self.addEventListener('install', e => {
-  e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS)));
+  // cache:'reload' でHTTPキャッシュを迂回し、必ずサーバーから最新を取得する
+  e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS.map(u => new Request(u, { cache: 'reload' })))));
   self.skipWaiting();
 });
 

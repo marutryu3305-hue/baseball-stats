@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>野球スコアブック</title>
+  <title>Jyunko Stats</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;600;700;900&display=swap" rel="stylesheet">
@@ -13,45 +13,68 @@
   <meta name="theme-color" content="#0d1526">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="スコアブック">
+  <meta name="apple-mobile-web-app-title" content="Jyunko Stats">
 </head>
 <body>
 
 <header class="app-header">
   <div class="header-inner">
     <div class="header-logo">
-      <svg width="28" height="28" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <circle cx="16" cy="16" r="14" fill="white" stroke="#60aaff" stroke-width="1.5"/>
-        <path d="M6 10 Q16 8 26 10" stroke="#1a3050" stroke-width="1.5" fill="none"/>
-        <path d="M6 22 Q16 24 26 22" stroke="#1a3050" stroke-width="1.5" fill="none"/>
-        <path d="M10 4 Q12 16 10 28" stroke="#1a3050" stroke-width="1.5" fill="none"/>
-        <path d="M22 4 Q20 16 22 28" stroke="#1a3050" stroke-width="1.5" fill="none"/>
-      </svg>
-      <span class="header-title">野球スコアブック</span>
+      <img src="icon-192.png" alt="Jyunko Stats" width="32" height="32" class="header-logo-img">
+      <span class="header-title">Jyunko Stats</span>
     </div>
+    <button class="season-btn" id="btn-season" title="シーズンを切り替え">
+      <svg width="14" height="14" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"/></svg>
+      <span id="season-name-display">---</span>
+      <svg width="12" height="12" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
+    </button>
     <div class="header-actions">
       <button class="btn btn-ghost btn-sm" id="btn-export" title="データをエクスポート">エクスポート</button>
-      <label class="btn btn-ghost btn-sm" title="データをインポート">
+      <label class="btn btn-ghost btn-sm import-label" title="データをインポート">
         インポート
         <input type="file" id="input-import" accept=".json" style="display:none">
       </label>
+    </div>
+    <div class="header-menu-wrap">
+      <button class="header-menu-btn" id="btn-header-menu" title="メニュー" aria-label="メニュー">
+        <svg width="18" height="18" viewBox="0 0 20 20" fill="currentColor"><path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z"/></svg>
+      </button>
+      <div class="header-menu" id="header-menu" style="display:none">
+        <button class="header-menu-item" id="menu-export">データをエクスポート</button>
+        <label class="header-menu-item">
+          データをインポート
+          <input type="file" id="input-import-mobile" accept=".json" style="display:none">
+        </label>
+      </div>
     </div>
   </div>
 </header>
 
 <nav class="main-nav" id="main-nav">
   <div class="nav-inner">
+    <button class="nav-tab" data-tab="players">
+      <svg class="tab-icon" viewBox="0 0 20 20" fill="currentColor"><path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"/></svg>
+      <span class="tab-label">選手一覧</span>
+    </button>
     <button class="nav-tab active" data-tab="games">
       <svg class="tab-icon" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"/></svg>
       <span class="tab-label">試合登録</span>
     </button>
-    <button class="nav-tab" data-tab="players">
-      <svg class="tab-icon" viewBox="0 0 20 20" fill="currentColor"><path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"/></svg>
-      <span class="tab-label">選手管理</span>
+    <button class="nav-tab" data-tab="history">
+      <svg class="tab-icon" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/></svg>
+      <span class="tab-label">試合結果</span>
     </button>
     <button class="nav-tab" data-tab="stats">
       <svg class="tab-icon" viewBox="0 0 20 20" fill="currentColor"><path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zM8 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zM14 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z"/></svg>
-      <span class="tab-label">成績集計</span>
+      <span class="tab-label">チーム成績</span>
+    </button>
+    <button class="nav-tab" data-tab="drill">
+      <svg class="tab-icon" viewBox="0 0 20 20" fill="currentColor"><path d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.53 1.53 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.53 1.53 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.53 1.53 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.532 1.532 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.53 1.53 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.53 1.53 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.53 1.53 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z"/></svg>
+      <span class="tab-label">実践練習</span>
+    </button>
+    <button class="nav-tab" data-tab="practice-stats">
+      <svg class="tab-icon" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M3 3a1 1 0 000 2v8a2 2 0 002 2h2.586l-1.293 1.293a1 1 0 101.414 1.414L10 15.414l2.293 2.293a1 1 0 001.414-1.414L12.414 15H15a2 2 0 002-2V5a1 1 0 100-2H3zm11.707 4.707a1 1 0 00-1.414-1.414L10 9.586 8.707 8.293a1 1 0 00-1.414 0l-2 2a1 1 0 101.414 1.414L8 10.414l1.293 1.293a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+      <span class="tab-label">実践成績</span>
     </button>
     <div class="nav-indicator" id="nav-indicator"></div>
   </div>
@@ -84,14 +107,16 @@
               <label class="toggle-option"><input type="radio" name="game-type" value="spring" checked><span>春リーグ</span></label>
               <label class="toggle-option"><input type="radio" name="game-type" value="fall"><span>秋リーグ</span></label>
               <label class="toggle-option"><input type="radio" name="game-type" value="practice"><span>練習試合</span></label>
+              <label class="toggle-option"><input type="radio" name="game-type" value="other"><span>その他</span></label>
             </div>
           </div>
           <div class="form-group form-group-full">
-            <label class="form-label">ホーム / アウェイ</label>
-            <div class="toggle-group">
-              <label class="toggle-option"><input type="radio" name="home-away" value="home" checked><span>ホーム</span></label>
-              <label class="toggle-option"><input type="radio" name="home-away" value="away"><span>アウェイ</span></label>
-            </div>
+            <label class="form-label" for="game-venue">会場（任意）</label>
+            <input type="text" id="game-venue" class="form-input" placeholder="例: ○○グラウンド" maxlength="30">
+          </div>
+          <div class="form-group form-group-full">
+            <label class="form-label" for="game-memo">メモ（任意）</label>
+            <textarea id="game-memo" class="form-input" rows="2" placeholder="例: 雨天中断、継投策など" maxlength="200" style="resize:vertical"></textarea>
           </div>
           <div class="form-group form-group-full">
             <label class="form-label">自チーム得点 (イニング別)</label>
@@ -100,6 +125,32 @@
           <div class="form-group form-group-full">
             <label class="form-label">相手チーム得点 (イニング別)</label>
             <div id="inning-opp"></div>
+          </div>
+          <!-- 打撃成績入力（任意） -->
+          <div class="form-group form-group-full">
+            <button type="button" class="stats-entry-toggle" id="toggle-inline-batting">
+              <svg class="stats-toggle-icon" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"/></svg>
+              <span>打撃成績も入力する（任意）</span>
+            </button>
+            <div class="stats-entry-body" id="inline-batting-body"></div>
+          </div>
+          <!-- 投球成績入力（任意） -->
+          <div class="form-group form-group-full">
+            <button type="button" class="stats-entry-toggle" id="toggle-inline-pitching">
+              <svg class="stats-toggle-icon" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"/></svg>
+              <span>投球成績も入力する（任意）</span>
+            </button>
+            <div class="stats-entry-body" id="inline-pitching-body">
+              <div class="pitching-entry-header">
+                <div class="form-group">
+                  <label class="form-label" for="inline-pitcher-select">投手を選択</label>
+                  <select id="inline-pitcher-select" class="form-select" style="max-width:280px">
+                    <option value="">-- 投手を選択 --</option>
+                  </select>
+                </div>
+              </div>
+              <div id="inline-pitching-form"></div>
+            </div>
           </div>
           <div class="form-group form-group-full form-actions">
             <button type="submit" class="btn btn-primary">試合を登録する</button>
@@ -142,21 +193,18 @@
         </div>
       </div>
 
-      <div class="card">
-        <div class="card-header">
-          <h2 class="card-title">過去の試合</h2>
-        </div>
-        <div id="games-list"></div>
-      </div>
     </div>
   </section>
 
-  <!-- 選手管理 -->
+  <!-- 選手一覧 -->
   <section class="tab-panel" id="panel-players">
     <div class="panel-header">
-      <h1 class="panel-title">選手管理</h1>
+      <h1 class="panel-title">選手一覧</h1>
     </div>
     <div class="panel-body">
+      <div class="card">
+        <div id="players-list"></div>
+      </div>
       <div class="card">
         <div class="card-header">
           <h2 class="card-title">選手追加</h2>
@@ -188,14 +236,8 @@
             <div class="checkbox-group" id="player-positions">
               <label class="checkbox-option"><input type="checkbox" value="投手"><span>投手</span></label>
               <label class="checkbox-option"><input type="checkbox" value="捕手"><span>捕手</span></label>
-              <label class="checkbox-option"><input type="checkbox" value="一塁手"><span>一塁手</span></label>
-              <label class="checkbox-option"><input type="checkbox" value="二塁手"><span>二塁手</span></label>
-              <label class="checkbox-option"><input type="checkbox" value="三塁手"><span>三塁手</span></label>
-              <label class="checkbox-option"><input type="checkbox" value="遊撃手"><span>遊撃手</span></label>
-              <label class="checkbox-option"><input type="checkbox" value="左翼手"><span>左翼手</span></label>
-              <label class="checkbox-option"><input type="checkbox" value="中堅手"><span>中堅手</span></label>
-              <label class="checkbox-option"><input type="checkbox" value="右翼手"><span>右翼手</span></label>
-              <label class="checkbox-option"><input type="checkbox" value="指名打者"><span>指名打者</span></label>
+              <label class="checkbox-option"><input type="checkbox" value="内野"><span>内野</span></label>
+              <label class="checkbox-option"><input type="checkbox" value="外野"><span>外野</span></label>
             </div>
           </div>
           <div class="form-group form-group-full form-actions">
@@ -203,35 +245,170 @@
           </div>
         </form>
       </div>
-      <div class="card">
-        <div class="card-header">
-          <h2 class="card-title">選手一覧</h2>
-        </div>
-        <div id="players-list"></div>
-      </div>
     </div>
   </section>
 
-  <!-- 成績集計 -->
+  <!-- チーム成績 -->
   <section class="tab-panel" id="panel-stats">
     <div class="panel-header">
-      <h1 class="panel-title">成績集計</h1>
+      <h1 class="panel-title">チーム成績</h1>
     </div>
     <div class="stats-subtabs">
       <nav class="subtab-nav">
-        <button class="subtab active" data-subtab="batting-stats">打撃成績</button>
-        <button class="subtab" data-subtab="pitching-stats">投球成績</button>
-        <button class="subtab" data-subtab="game-stats">試合成績</button>
+        <button class="subtab active" data-subtab="batting-stats">打者</button>
+        <button class="subtab" data-subtab="pitching-stats">投手</button>
       </nav>
       <div class="subtab-content">
         <div class="subtab-panel active" id="subtab-batting-stats"></div>
         <div class="subtab-panel" id="subtab-pitching-stats"></div>
-        <div class="subtab-panel" id="subtab-game-stats"></div>
       </div>
     </div>
   </section>
 
+
+  <!-- 個人成績 -->
+
+  <!-- 実践練習 -->
+  <section class="tab-panel" id="panel-drill">
+    <div class="panel-header">
+      <h1 class="panel-title">実践練習</h1>
+    </div>
+    <div class="panel-body">
+      <div class="card">
+        <div class="card-header">
+          <h2 class="card-title">練習を登録</h2>
+        </div>
+        <form id="form-drill" class="form-grid">
+          <div class="form-group form-group-full drill-edit-banner" id="drill-edit-banner" style="display:none">
+            <span id="drill-edit-banner-text">✏️ 編集中</span>
+            <button type="button" class="btn btn-ghost-dark btn-sm" id="drill-edit-cancel">編集をやめる</button>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="drill-date">練習日 <span class="required">*</span></label>
+            <input type="date" id="drill-date" class="form-input" required>
+          </div>
+          <div class="form-group form-group-full">
+            <label class="form-label" for="drill-memo">メモ（任意）</label>
+            <textarea id="drill-memo" class="form-input" rows="2" placeholder="例: 紅白戦、フリー打撃など" maxlength="200" style="resize:vertical"></textarea>
+          </div>
+          <div class="form-group form-group-full">
+            <label class="form-label">① 投手を選択（任意）</label>
+            <div class="form-group">
+              <select id="drill-pitcher-select" class="form-select" style="max-width:280px">
+                <option value="">-- 投手を選択 --</option>
+              </select>
+            </div>
+            <div id="drill-pitching-form"></div>
+            <p class="form-hint">投球回・失点・自責点だけ入力してください。被安打・奪三振・与四球などは下で入力した打者との対戦結果から自動で反映されます。</p>
+          </div>
+          <div class="form-group form-group-full">
+            <label class="form-label">② 打者を追加して対戦結果を入力</label>
+            <div id="drill-batting-rows"></div>
+            <button type="button" class="btn btn-ghost-dark btn-sm" id="drill-add-batter" style="margin-top:8px">＋ 打者を追加</button>
+          </div>
+          <div class="form-group form-group-full form-actions">
+            <button type="submit" class="btn btn-primary" id="drill-submit-btn">練習を登録する</button>
+          </div>
+        </form>
+      </div>
+      <div id="drill-history"></div>
+    </div>
+  </section>
+
+  <!-- 実践成績 -->
+  <section class="tab-panel" id="panel-practice-stats">
+    <div class="panel-header">
+      <h1 class="panel-title">実践成績</h1>
+      <p class="panel-subtitle">実践練習のデータをもとに集計（公式成績とは別集計）</p>
+    </div>
+    <div class="stats-subtabs">
+      <nav class="subtab-nav">
+        <button class="subtab active" data-subtab="p-batting-stats">打者</button>
+        <button class="subtab" data-subtab="p-pitching-stats">投手</button>
+      </nav>
+      <div class="subtab-content">
+        <div class="subtab-panel active" id="subtab-p-batting-stats"></div>
+        <div class="subtab-panel" id="subtab-p-pitching-stats"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 試合結果 -->
+  <section class="tab-panel" id="panel-history">
+    <div class="panel-header">
+      <h1 class="panel-title">試合結果</h1>
+    </div>
+    <div class="panel-body">
+      <div id="game-stats-container"></div>
+      <div id="standings-container"></div>
+      <div class="history-filter-bar">
+        <span class="stats-filter-label">絞り込み：</span>
+        <select id="history-filter-select" class="form-select stats-filter-select">
+          <option value="all">すべて</option>
+          <option value="spring">春リーグ</option>
+          <option value="fall">秋リーグ</option>
+          <option value="practice">練習試合</option>
+          <option value="other">その他</option>
+        </select>
+      </div>
+      <div id="history-list"></div>
+    </div>
+  </section>
+
 </main>
+
+<!-- シーズン管理モーダル -->
+<div id="season-modal-overlay" class="modal-overlay" style="display:none">
+  <div class="modal modal-season">
+    <div class="edit-modal-header">
+      <h3 class="modal-title">シーズン管理</h3>
+      <button class="btn-close-modal" id="season-modal-close">✕</button>
+    </div>
+    <div id="season-modal-body" class="season-modal-body"></div>
+    <div class="modal-actions">
+      <button class="btn btn-primary btn-sm" id="btn-new-season">＋ 新しいシーズンを作成</button>
+    </div>
+  </div>
+</div>
+
+<!-- 新シーズン作成モーダル -->
+<div id="new-season-modal-overlay" class="modal-overlay" style="display:none">
+  <div class="modal">
+    <div class="edit-modal-header">
+      <h3 class="modal-title">新シーズンを作成</h3>
+      <button class="btn-close-modal" id="new-season-modal-close">✕</button>
+    </div>
+    <div style="padding: 20px 24px; display:flex; flex-direction:column; gap:16px;">
+      <div class="form-group">
+        <label class="form-label" for="new-season-year">年度</label>
+        <input type="number" id="new-season-year" class="form-input" min="2000" max="2099" style="max-width:120px">
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="new-season-name">シーズン名</label>
+        <input type="text" id="new-season-name" class="form-input" maxlength="30" placeholder="例: 2027年度">
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" id="new-season-cancel">キャンセル</button>
+      <button class="btn btn-primary" id="new-season-confirm">作成して切り替え</button>
+    </div>
+  </div>
+</div>
+
+<!-- リーグ参加チーム管理モーダル -->
+<div id="league-modal-overlay" class="modal-overlay" style="display:none">
+  <div class="modal">
+    <div class="edit-modal-header">
+      <h3 class="modal-title" id="league-modal-title">参加チーム</h3>
+      <button class="btn-close-modal" id="league-modal-close">✕</button>
+    </div>
+    <div id="league-modal-body" class="league-modal-body"></div>
+    <div class="league-modal-add">
+      <input type="text" id="league-team-input" class="form-input" placeholder="チーム名を入力" maxlength="30">
+      <button class="btn btn-primary btn-sm" id="league-team-add">追加</button>
+    </div>
+  </div>
+</div>
 
 <!-- トースト通知 -->
 <div id="toast" class="toast" aria-live="polite"></div>
@@ -245,6 +422,32 @@
       <button class="btn btn-ghost" id="modal-cancel">キャンセル</button>
       <button class="btn btn-danger" id="modal-confirm">削除する</button>
     </div>
+  </div>
+</div>
+
+<!-- 編集モーダル -->
+<div id="edit-modal-overlay" class="modal-overlay" style="display:none">
+  <div class="modal modal-edit-lg">
+    <div class="edit-modal-header">
+      <h3 class="modal-title" id="edit-modal-title">編集</h3>
+      <button class="btn-close-modal" id="edit-modal-close">✕</button>
+    </div>
+    <div id="edit-modal-body" class="edit-modal-scroll"></div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost-dark btn-sm" id="edit-modal-cancel">キャンセル</button>
+      <button class="btn btn-primary" id="edit-modal-save">保存する</button>
+    </div>
+  </div>
+</div>
+
+<!-- 個人成績 モーダル -->
+<div id="player-stats-modal-overlay" class="modal-overlay" style="display:none">
+  <div class="modal modal-edit-lg">
+    <div class="edit-modal-header">
+      <h3 class="modal-title" id="player-stats-modal-title">成績</h3>
+      <button class="btn-close-modal" id="player-stats-modal-close">✕</button>
+    </div>
+    <div id="player-stats-modal-body" class="edit-modal-scroll"></div>
   </div>
 </div>
 
