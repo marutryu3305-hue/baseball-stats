@@ -1,6 +1,6 @@
 {
-  "name": "Jyunko Stats",
-  "short_name": "Jyunko Stats",
+  "name": "Junko Stats",
+  "short_name": "Junko Stats",
   "description": "野球チームの試合・選手・成績を管理するアプリ",
   "start_url": "./index.html",
   "display": "standalone",
